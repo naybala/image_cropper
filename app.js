@@ -1,8 +1,8 @@
 var bs_modal = $("#modal");
-var image = document.getElementById("image");
+var image = document.getElementById("employee-image");
 var cropper, reader, file;
 
-$("body").on("change", ".image", function (e) {
+$("body").on("change", ".employee-image", function (e) {
   var files = e.target.files;
   var done = function (url) {
     image.src = url;
@@ -28,7 +28,7 @@ bs_modal
   .on("shown.bs.modal", function () {
     cropper = new Cropper(image, {
       aspectRatio: 1,
-      viewMode: 3,
+      viewMode: 2,
       preview: ".preview",
     });
   })
@@ -39,8 +39,8 @@ bs_modal
 
 $("#crop").click(function () {
   canvas = cropper.getCroppedCanvas({
-    width: 160,
-    height: 160,
+    width: 260,
+    height: 260,
   });
 
   canvas.toBlob(function (blob) {
@@ -61,6 +61,7 @@ $("#crop").click(function () {
             .map((c) => c.charCodeAt(0))
         );
         let file = new File([buffer], filename, { type: "image/png" });
+        console.log(file);
       }
     };
   });
