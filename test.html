@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper Demo</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
+      rel="stylesheet" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js">
+        </script>
+  </head>
+  <body class="bg-gray-200 p-6">
+
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+      <h1 class="text-2xl font-semibold mb-4">Image Cropper Demo</h1>
+
+      <input type="file" id="input-image" accept="image/*" class="mb-4">
+
+      <input type="file" id="input-image-final" accept="image/*"
+        class="mb-4">
+
+      <!-- Modal toggle -->
+      <button data-modal-target="employee-modal"
+        data-modal-toggle="employee-modal"
+        id="employee-modal-header"
+        class="hidden block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        type="button">
+        Toggle modal
+      </button>
+
+      <!-- Main modal -->
+      <div id="employee-modal" data-modal-backdrop="static" tabindex="-1"
+        aria-hidden="true"
+        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-0 w-full max-w-2xl max-h-full">
+          <!-- Modal content -->
+          <div
+            class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div
+              class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+              <h3
+                class="text-xl font-semibold text-gray-900 dark:text-white">
+                Static modal
+              </h3>
+              <button type="button"
+                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                data-modal-hide="employee-modal">
+                <svg class="w-3 h-3" aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" stroke-width="2"
+                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-0 space-y-4">
+              <img id="image" src alt="Preview"
+                class="object-contain w-auto h-auto">
+            </div>
+            <!-- Modal footer -->
+            <div
+              class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+              <button data-modal-hide="employee-modal"
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                id="cropButton">Crop</button>
+              <button data-modal-hide="employee-modal"
+                type="button"
+                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+      <script>
+            document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('input-image');
+            const inputFinal = document.getElementById('input-image-final');
+            const image = document.getElementById('image');
+            const cropButton = document.getElementById('cropButton');
+            const employeeModalHeader = document.getElementById('employee-modal-header');
+            let cropper;
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                image.src = event.target.result;
+                cropper = new Cropper(image, {
+                    aspectRatio: 1, // You can adjust the aspect ratio as needed
+                    viewMode: 1,
+                    autoCropArea: 1,
+                    background: false,
+                });
+                };
+                reader.readAsDataURL(file);
+                employeeModalHeader.click();
+            });
+
+            cropButton.addEventListener('click', () => {
+                canvas = cropper.getCroppedCanvas({
+                            width: 260,
+                            height: 260,
+                        });
+
+                canvas.toBlob(function (blob) {
+                    url = URL.createObjectURL(blob);
+                    var reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = function () {
+                    var base64data = reader.result;
+                    if (base64data.startsWith("data:")) {
+                        const timestamp = new Date().getTime();
+                        const filename = `image_${timestamp}_${Math.floor(
+                        Math.random() * 10000
+                        )}.png`;
+                        let base64Data = base64data.replace(/^data:image\/\w+;base64,/, "");
+                        let buffer = new Uint8Array(
+                        atob(base64Data)
+                            .split("")
+                            .map((c) => c.charCodeAt(0))
+                        );
+                        let file = new File([buffer], filename, { type: "image/png" });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        const fileList = dataTransfer.files;
+                        inputFinal.files = fileList;
+                        console.log(inputFinal.value);
+                    }
+                    };
+                });
+            });
+            });
+  </script>
+    </body>
+  </html>
